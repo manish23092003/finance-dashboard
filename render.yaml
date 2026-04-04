@@ -2,7 +2,7 @@ services:
   # 1. The Backend (API)
   - type: web
     name: findash-api-manish
-    runtime: node
+    env: node
     plan: free
     rootDir: server
     buildCommand: npm install && npx prisma generate && npm run build
@@ -16,12 +16,12 @@ services:
         value: 10000
 
   # 2. The Frontend (UI)
-  - type: static
+  - type: web
     name: findash-ui-manish
-    runtime: static
+    env: static
     rootDir: client
     buildCommand: npm install && npm run build
-    publishPath: dist
+    staticPublishPath: dist
     routes:
       - type: rewrite
         source: /*
