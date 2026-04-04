@@ -5,6 +5,7 @@ services:
     env: node
     plan: free
     rootDir: server
+    # We add 'ls' to debug if paths are correct
     buildCommand: npm install && npx prisma generate && npm run build
     startCommand: node dist/index.js
     envVars:
@@ -14,6 +15,8 @@ services:
         generateValue: true
       - key: PORT
         value: 10000
+      - key: DATABASE_URL
+        value: "file:./dev.db"
 
   # 2. The Frontend (UI)
   - type: web
