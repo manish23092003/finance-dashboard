@@ -34,7 +34,7 @@ export const validate = (
     }
 
     // Replace with parsed/transformed data (e.g., trimmed strings, type coercions)
-    (req as Record<string, unknown>)[source] = result.data;
+    (req as unknown as Record<string, unknown>)[source] = result.data;
     next();
   };
 };

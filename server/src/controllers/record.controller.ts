@@ -67,7 +67,7 @@ export async function getById(
 ): Promise<void> {
   try {
     const record = await recordService.getById(
-      req.params.id,
+      req.params.id as string,
       req.user!.id,
       req.user!.role
     );
@@ -111,7 +111,7 @@ export async function update(
 ): Promise<void> {
   try {
     const record = await recordService.update(
-      req.params.id,
+      req.params.id as string,
       req.body,
       req.user!.id,
       req.user!.role
@@ -135,7 +135,7 @@ export async function remove(
   next: NextFunction
 ): Promise<void> {
   try {
-    const result = await recordService.remove(req.params.id);
+    const result = await recordService.remove(req.params.id as string);
     res.status(200).json({
       success: true,
       data: result,
