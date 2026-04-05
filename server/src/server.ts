@@ -11,7 +11,7 @@ const app = express();
 app.use(cors({
   origin: function (origin, callback) {
     // Allow any localhost origin in development
-    if (!origin || /^http:\/\/localhost(:\d+)?$/.test(origin)) {
+    if (!origin || /^http:\/\/localhost(:\d+)?$/.test(origin) || origin.includes('onrender.com')) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));

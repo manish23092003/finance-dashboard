@@ -7,8 +7,13 @@ import { useAuthStore } from '../context/authStore';
  * Request Interceptor: Attaches `Bearer ${token}` from Zustand store.
  * Response Interceptor: On 401, clears auth state and redirects to /login.
  */
+const apiHost = import.meta.env.VITE_API_URL;
+const baseURL = apiHost 
+  ? (apiHost.startsWith('http') ? `${apiHost}/api` : `https://${apiHost}/api`)
+  : 'http://localhost:5000/api';
+
 const api = axios.create({
-  baseURL: 'http://localhost:5000/api',
+  baseURL,
   headers: { 'Content-Type': 'application/json' },
   timeout: 15000,
 });
