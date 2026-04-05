@@ -1,5 +1,5 @@
 import prisma from '../config/prisma';
-import { Prisma } from '../generated/prisma';
+import { Prisma } from '@prisma/client';
 import type { DashboardMetrics, Role } from '../types/dto';
 
 // ─── Types for raw query results ────────────────────────────────────────────
