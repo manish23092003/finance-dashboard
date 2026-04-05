@@ -31,7 +31,4 @@ services:
         destination: /index.html
     envVars:
       - key: VITE_API_URL
-        fromService:
-          name: findash-api-manish
-          type: web
-          property: host
+        value: https://findash-api-manish.onrender.com
