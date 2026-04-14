@@ -192,18 +192,20 @@ export default function TransactionsPage() {
             icon={<Download className="w-4 h-4" />}
             id="export-csv-btn"
           >
-            Export CSV
+            <span className="hidden sm:inline">Export CSV</span>
+            <span className="sm:hidden">Export</span>
           </Button>
           {canCreate && (
             <Button onClick={openAdd} icon={<Plus className="w-4 h-4" />} id="add-transaction-btn">
-              Add Transaction
+              <span className="hidden sm:inline">Add Transaction</span>
+              <span className="sm:hidden">Add</span>
             </Button>
           )}
         </div>
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 shadow-sm border border-slate-100 dark:border-slate-800 mb-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <Input
             type="date"
             label="From Date"
@@ -218,13 +220,12 @@ export default function TransactionsPage() {
             onChange={(e) => setFilters((f) => ({ ...f, page: 1, dateTo: e.target.value }))}
             id="filter-date-to"
           />
-          <Select
+          <Input
             label="Category"
-            options={(categories || []).map((c) => ({ value: c, label: c }))}
-            placeholder="All Categories"
+            placeholder="All"
             value={filters.category || ''}
             onChange={(e) => setFilters((f) => ({ ...f, page: 1, category: e.target.value }))}
-            id="filter-category"
+            id="filter-category-input"
           />
           <Select
             label="Type"
@@ -243,108 +244,212 @@ export default function TransactionsPage() {
       {isLoading ? (
         <Spinner />
       ) : (
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
-                  <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Date</th>
-                  <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Category</th>
-                  <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Type</th>
-                  <th className="text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Amount</th>
-                  <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Notes</th>
-                  {(canCreate || isAdmin) && (
-                    <th className="text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Actions</th>
+        <>
+          {/* ── Desktop Table View (hidden on mobile) ───────────────────────── */}
+          <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-slate-800">
+                    <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Date</th>
+                    <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Category</th>
+                    <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Type</th>
+                    <th className="text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Amount</th>
+                    <th className="text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Notes</th>
+                    {(canCreate || isAdmin) && (
+                      <th className="text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider px-6 py-3">Actions</th>
+                    )}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
+                  {data?.records.map((record) => (
+                    <tr key={record.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
+                      <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-400 whitespace-nowrap">{formatDate(record.date)}</td>
+                      <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-200">{record.category}</td>
+                      <td className="px-6 py-4">
+                        <Badge variant={record.type === 'INCOME' ? 'income' : 'expense'}>
+                          {record.type}
+                        </Badge>
+                      </td>
+                      <td className={`px-6 py-4 text-sm font-semibold text-right whitespace-nowrap ${
+                        record.type === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                      }`}>
+                        {record.type === 'INCOME' ? '+' : '-'}{formatCurrency(record.amount)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate">{record.notes}</td>
+                      {(canCreate || isAdmin) && (
+                        <td className="px-6 py-4 text-right whitespace-nowrap">
+                          <div className="flex items-center justify-end gap-1">
+                            {canEditRecord(record) && (
+                              <button
+                                onClick={() => openEdit(record)}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-400/10 transition-colors cursor-pointer"
+                                title="Edit"
+                              >
+                                <Pencil className="w-4 h-4" />
+                              </button>
+                            )}
+                            {isAdmin && (
+                              <button
+                                onClick={() => handleDelete(record.id)}
+                                className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 transition-colors cursor-pointer"
+                                title="Delete"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </td>
+                      )}
+                    </tr>
+                  ))}
+                  {data?.records.length === 0 && (
+                    <tr>
+                      <td colSpan={6} className="px-6 py-16 text-center text-slate-400">
+                        <Search className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                        <p className="font-medium">No transactions found</p>
+                        <p className="text-sm mt-1">Try adjusting your filters</p>
+                      </td>
+                    </tr>
                   )}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-50 dark:divide-slate-800/50">
-                {data?.records.map((record) => (
-                  <tr key={record.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4 text-sm text-slate-700 dark:text-slate-400 whitespace-nowrap">{formatDate(record.date)}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-slate-900 dark:text-slate-200">{record.category}</td>
-                    <td className="px-6 py-4">
+                </tbody>
+              </table>
+            </div>
+
+            {pagination && pagination.totalPages > 1 && (
+              <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
+                <p className="text-sm text-slate-500 dark:text-slate-400">
+                  Showing {(pagination.page - 1) * pagination.limit + 1}–
+                  {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={pagination.page <= 1}
+                    onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}
+                    icon={<ChevronLeft className="w-4 h-4" />}
+                  >
+                    Prev
+                  </Button>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300 px-2">
+                    {pagination.page} / {pagination.totalPages}
+                  </span>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={pagination.page >= pagination.totalPages}
+                    onClick={() => setFilters((f) => ({ ...f, page: f.page + 1 }))}
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* ── Mobile Card View (hidden on md+) ────────────────────────────── */}
+          <div className="md:hidden space-y-3">
+            {data?.records.length === 0 && (
+              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 px-6 py-16 text-center text-slate-400">
+                <Search className="w-10 h-10 mx-auto mb-3 opacity-40" />
+                <p className="font-medium">No transactions found</p>
+                <p className="text-sm mt-1">Try adjusting your filters</p>
+              </div>
+            )}
+            {data?.records.map((record) => (
+              <div
+                key={record.id}
+                className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-4 transition-all active:scale-[0.98]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-200 truncate">
+                        {record.category}
+                      </p>
                       <Badge variant={record.type === 'INCOME' ? 'income' : 'expense'}>
                         {record.type}
                       </Badge>
-                    </td>
-                    <td className={`px-6 py-4 text-sm font-semibold text-right whitespace-nowrap ${
-                      record.type === 'INCOME' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
-                    }`}>
-                      {record.type === 'INCOME' ? '+' : '-'}{formatCurrency(record.amount)}
-                    </td>
-                    <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 max-w-[200px] truncate">{record.notes}</td>
-                    {(canCreate || isAdmin) && (
-                      <td className="px-6 py-4 text-right whitespace-nowrap">
-                        <div className="flex items-center justify-end gap-1">
-                          {canEditRecord(record) && (
-                            <button
-                              onClick={() => openEdit(record)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-indigo-600 dark:hover:text-indigo-400 hover:bg-indigo-50 dark:hover:bg-indigo-400/10 transition-colors cursor-pointer"
-                              title="Edit"
-                            >
-                              <Pencil className="w-4 h-4" />
-                            </button>
-                          )}
-                          {isAdmin && (
-                            <button
-                              onClick={() => handleDelete(record.id)}
-                              className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-400/10 transition-colors cursor-pointer"
-                              title="Delete"
-                            >
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          )}
-                        </div>
-                      </td>
+                    </div>
+                    <p className="text-xs text-slate-500 dark:text-slate-400">
+                      {formatDate(record.date)}
+                    </p>
+                    {record.notes && (
+                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-1 truncate">
+                        {record.notes}
+                      </p>
                     )}
-                  </tr>
-                ))}
-                {data?.records.length === 0 && (
-                  <tr>
-                    <td colSpan={6} className="px-6 py-16 text-center text-slate-400">
-                      <Search className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                      <p className="font-medium">No transactions found</p>
-                      <p className="text-sm mt-1">Try adjusting your filters</p>
-                    </td>
-                  </tr>
-                )}
-              </tbody>
-            </table>
-          </div>
+                  </div>
+                  <p className={`text-base font-bold whitespace-nowrap ${
+                    record.type === 'INCOME'
+                      ? 'text-emerald-600 dark:text-emerald-400'
+                      : 'text-rose-600 dark:text-rose-400'
+                  }`}>
+                    {record.type === 'INCOME' ? '+' : '-'}{formatCurrency(record.amount)}
+                  </p>
+                </div>
 
-          {pagination && pagination.totalPages > 1 && (
-            <div className="flex items-center justify-between px-6 py-4 border-t border-slate-100 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-800/30">
-              <p className="text-sm text-slate-500 dark:text-slate-400">
-                Showing {(pagination.page - 1) * pagination.limit + 1}–
-                {Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
-              </p>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={pagination.page <= 1}
-                  onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}
-                  icon={<ChevronLeft className="w-4 h-4" />}
-                >
-                  Prev
-                </Button>
-                <span className="text-sm font-medium text-slate-700 dark:text-slate-300 px-2">
-                  {pagination.page} / {pagination.totalPages}
-                </span>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  disabled={pagination.page >= pagination.totalPages}
-                  onClick={() => setFilters((f) => ({ ...f, page: f.page + 1 }))}
-                >
-                  Next
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
+                {/* Mobile action buttons */}
+                {(canCreate || isAdmin) && canEditRecord(record) && (
+                  <div className="flex items-center gap-2 mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+                    {canEditRecord(record) && (
+                      <button
+                        onClick={() => openEdit(record)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-500/10 hover:bg-indigo-100 dark:hover:bg-indigo-500/20 transition-colors cursor-pointer"
+                      >
+                        <Pencil className="w-3.5 h-3.5" />
+                        Edit
+                      </button>
+                    )}
+                    {isAdmin && (
+                      <button
+                        onClick={() => handleDelete(record.id)}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-500/10 hover:bg-red-100 dark:hover:bg-red-500/20 transition-colors cursor-pointer"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Delete
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
-            </div>
-          )}
-        </div>
+            ))}
+
+            {/* Mobile Pagination */}
+            {pagination && pagination.totalPages > 1 && (
+              <div className="flex flex-col items-center gap-3 pt-2 pb-4">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  {(pagination.page - 1) * pagination.limit + 1}–{Math.min(pagination.page * pagination.limit, pagination.total)} of {pagination.total}
+                </p>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={pagination.page <= 1}
+                    onClick={() => setFilters((f) => ({ ...f, page: f.page - 1 }))}
+                    icon={<ChevronLeft className="w-4 h-4" />}
+                  >
+                    Prev
+                  </Button>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300 px-2">
+                    {pagination.page} / {pagination.totalPages}
+                  </span>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    disabled={pagination.page >= pagination.totalPages}
+                    onClick={() => setFilters((f) => ({ ...f, page: f.page + 1 }))}
+                  >
+                    Next
+                    <ChevronRight className="w-4 h-4" />
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        </>
       )}
 
       <Modal

@@ -96,12 +96,13 @@ export default function AdminUsersPage() {
           </div>
         </div>
         <Button onClick={openCreateModal} icon={<UserPlus className="w-4 h-4" />} id="create-user-btn">
-          Create User
+          <span className="hidden sm:inline">Create User</span>
+          <span className="sm:hidden">Create</span>
         </Button>
       </div>
 
-      {/* Users Table */}
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
+      {/* ── Desktop Table View (hidden on mobile) ───────────────────────── */}
+      <div className="hidden md:block bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -177,6 +178,66 @@ export default function AdminUsersPage() {
             </tbody>
           </table>
         </div>
+      </div>
+
+      {/* ── Mobile Card View (hidden on md+) ────────────────────────────── */}
+      <div className="md:hidden space-y-3">
+        {users?.map((u) => (
+          <div
+            key={u.id}
+            className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-800 p-4"
+          >
+            {/* User Identity Row */}
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center text-white text-sm font-bold shrink-0 shadow-md">
+                {u.name.charAt(0).toUpperCase()}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold text-slate-900 dark:text-slate-200 truncate">{u.name}</p>
+                <p className="text-xs text-slate-500 dark:text-slate-400 truncate">{u.email}</p>
+              </div>
+              <Badge variant={u.isActive ? 'active' : 'inactive'}>
+                {u.isActive ? 'Active' : 'Inactive'}
+              </Badge>
+            </div>
+
+            {/* Details Row */}
+            <div className="flex items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800">
+              <div className="flex items-center gap-3">
+                {/* Role Selector */}
+                <select
+                  value={u.role}
+                  onChange={(e) => handleRoleChange(u.id, e.target.value as Role)}
+                  disabled={changeRoleMutation.isPending}
+                  className="text-xs rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-2.5 py-1.5 text-slate-700 dark:text-slate-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-colors disabled:opacity-50 cursor-pointer"
+                >
+                  <option value="ADMIN">Admin</option>
+                  <option value="ANALYST">Analyst</option>
+                  <option value="VIEWER">Viewer</option>
+                </select>
+
+                <span className="text-xs text-slate-400 dark:text-slate-500">
+                  Joined {formatDate(u.createdAt)}
+                </span>
+              </div>
+
+              {/* Toggle */}
+              <button
+                onClick={() => handleToggleStatus(u.id, !u.isActive)}
+                disabled={toggleStatusMutation.isPending}
+                className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 cursor-pointer ${
+                  u.isActive ? 'bg-emerald-500' : 'bg-slate-300 dark:bg-slate-600'
+                }`}
+              >
+                <span
+                  className={`inline-block h-4 w-4 transform rounded-full bg-white shadow-sm transition-transform duration-200 ${
+                    u.isActive ? 'translate-x-6' : 'translate-x-1'
+                  }`}
+                />
+              </button>
+            </div>
+          </div>
+        ))}
       </div>
 
       {/* Create User Modal */}

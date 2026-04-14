@@ -22,17 +22,17 @@ export default function MetricCard({ label, value, icon: Icon, variant }: Metric
   return (
     <div
       className={cn(
-        'bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800',
+        'bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-800',
         'hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group'
       )}
     >
-      <div className="flex items-center justify-between mb-4">
-        <div className={cn('p-3 rounded-xl', c.bg)}>
-          <Icon className={cn('w-6 h-6', c.icon)} />
+      <div className="flex items-center justify-between mb-3 sm:mb-4">
+        <div className={cn('p-2 sm:p-3 rounded-xl', c.bg)}>
+          <Icon className={cn('w-5 h-5 sm:w-6 sm:h-6', c.icon)} />
         </div>
       </div>
-      <p className="text-sm text-slate-500 font-medium">{label}</p>
-      <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">{value}</p>
+      <p className="text-xs sm:text-sm text-slate-500 font-medium">{label}</p>
+      <p className="text-lg sm:text-2xl font-bold text-slate-900 dark:text-white mt-1 tracking-tight">{value}</p>
     </div>
   );
 }

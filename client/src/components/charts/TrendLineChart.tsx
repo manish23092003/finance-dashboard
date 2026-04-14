@@ -20,9 +20,9 @@ export default function TrendLineChart({ data }: Props) {
   const isDark = theme === 'dark';
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800">
-      <div className="flex items-center gap-2 mb-6">
-        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Monthly Trends</h3>
+    <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-800">
+      <div className="flex items-center gap-2 mb-4 sm:mb-6">
+        <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Monthly Trends</h3>
         <div className="group relative">
           <Info className="w-4 h-4 text-slate-400 cursor-help" />
           <div className="absolute left-1/2 -top-2 -translate-y-full -translate-x-1/2 w-48 p-2 bg-slate-800 text-slate-200 text-xs rounded shadow-lg opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10 text-center">
@@ -30,8 +30,8 @@ export default function TrendLineChart({ data }: Props) {
           </div>
         </div>
       </div>
-      <ResponsiveContainer width="100%" height={320}>
-        <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
+      <ResponsiveContainer width="100%" height={280}>
+        <LineChart data={data} margin={{ top: 5, right: 10, left: -10, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={isDark ? '#334155' : '#f1f5f9'} />
           <XAxis
             dataKey="month"

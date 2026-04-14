@@ -11,6 +11,13 @@ body {
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+/* Smooth touch interactions on mobile */
+button, a, [role="button"] {
+  touch-action: manipulation;
 }
 
 /* ─── Custom Scrollbar ──────────────────────────────────────────────────────── */

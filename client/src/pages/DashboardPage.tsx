@@ -47,11 +47,11 @@ export default function DashboardPage() {
       </div>
 
       {chartData.length > 0 && (
-        <div className="mb-8 p-6 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 shadow-sm">
-          <div className="flex items-center gap-2 mb-4">
+        <div className="mb-6 sm:mb-8 p-4 sm:p-6 bg-indigo-50/50 dark:bg-indigo-900/10 rounded-2xl border border-indigo-100 dark:border-indigo-500/20 shadow-sm">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             <Wand2 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
-            <h2 className="text-lg font-semibold text-slate-900 dark:text-white">Next Month Projection</h2>
-            <span className="text-sm text-slate-500 dark:text-slate-400 ml-2">(3-Month Moving Average)</span>
+            <h2 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white">Next Month Projection</h2>
+            <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">(3-Month Moving Average)</span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl rounded-xl p-5 shadow-sm border border-emerald-100 dark:border-emerald-500/20">
@@ -70,7 +70,7 @@ export default function DashboardPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 stagger-children">
+      <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8 stagger-children">
         <MetricCard
           label="Total Income"
           value={formatCurrency(data.totalIncome)}

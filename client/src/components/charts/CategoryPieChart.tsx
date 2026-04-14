@@ -15,9 +15,9 @@ export default function CategoryPieChart({ data }: Props) {
   const isDark = theme === 'dark';
 
   return (
-    <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-sm border border-slate-100 dark:border-slate-800 h-full">
-      <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Top Spending Categories</h3>
-      <ResponsiveContainer width="100%" height={280}>
+    <div className="bg-white dark:bg-slate-900 rounded-2xl p-4 sm:p-6 shadow-sm border border-slate-100 dark:border-slate-800 h-full">
+      <h3 className="text-base sm:text-lg font-semibold text-slate-900 dark:text-white mb-4 sm:mb-6">Top Spending Categories</h3>
+      <ResponsiveContainer width="100%" height={260}>
         <PieChart>
           <Pie
             data={data}
