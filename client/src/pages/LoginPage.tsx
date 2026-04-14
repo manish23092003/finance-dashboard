@@ -40,8 +40,13 @@ export default function LoginPage() {
       toast.success('Welcome back!');
       navigate('/dashboard');
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { error?: string } } };
-      toast.error(error.response?.data?.error || 'Login failed. Please try again.');
+      const error = err as { response?: { data?: { error?: string } }; code?: string };
+      // Distinguish cold-start (network/timeout) from actual auth failures
+      if (!error.response || error.code === 'ECONNABORTED') {
+        toast.error('Server is waking up — please try again in a few seconds.', { duration: 5000 });
+      } else {
+        toast.error(error.response?.data?.error || 'Login failed. Please try again.');
+      }
     }
   };
 
