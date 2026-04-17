@@ -28,7 +28,7 @@ I chose a modern, type-safe stack to ensure the application is robust and mainta
 **The Backend (Server)**
 * **Node.js & Express:** A RESTful API built with a clean, layered architecture (Routes → Controllers → Services).
 * **Prisma ORM & SQLite:** For type-safe database queries and easy local setup without needing a separate database server.
-* **Security:** `bcrypt` for password hashing, and `jsonwebtoken` (JWT) for secure, stateless API authentication.
+* **Security:** `bcrypt` for password hashing, and `jsonwebtoken` for secure, stateless API authentication.
 
 ---
 
